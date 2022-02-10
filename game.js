@@ -5,6 +5,8 @@ kaboom({
     debug: true,
 })
 
+const MOVE_SPEED = 120
+
 loadRoot('https://i.imgur.com/')
 loadSprite('link-going-left', '1Xq9biB.png')
 loadSprite('link-going-right', 'yZIb8O2.png')
@@ -54,7 +56,7 @@ scene("game", ({ level, score }) => {
         'x': [sprite('bottom-left-wall'), solid()],
         'y': [sprite('top-left-wall'), solid()],
         'z': [sprite('bottom-right-wall'), solid()],
-        '%': [sprite('left-door')],
+        '%': [sprite('left-door'), solid()],
         '^': [sprite('top-door')],
         '$': [sprite('stairs')],
         '*': [sprite('slicer')],
@@ -93,6 +95,30 @@ scene("game", ({ level, score }) => {
 
     player.action(() => {
         player.resolve()
+    })
+
+    keyDown('left', () => {
+        player.changeSprite('link-going-left')
+        player.move(-MOVE_SPEED, 0)
+        player.dir = vec2(-1,0)
+    })
+
+    keyDown('right', () => {
+        player.changeSprite('link-going-right')
+        player.move(MOVE_SPEED, 0)
+        player.dir = vec2(1,0)
+    })
+
+    keyDown('up', () => {
+        player.changeSprite('link-going-up')
+        player.move(0, -MOVE_SPEED)
+        player.dir = vec2(0,-1)
+    })
+
+    keyDown('down', () => {
+        player.changeSprite('link-going-down')
+        player.move(0, MOVE_SPEED)
+        player.dir = vec2(0,1)
     })
 
 })
