@@ -83,6 +83,18 @@ scene("game", ({ level, score }) => {
         scale(2)
     ])
 
+    const player = add([
+        sprite('link-going-right'),
+        pos(5, 190),
+        {
+            dir: vec2(1,0),
+        }
+    ])
+
+    player.action(() => {
+        player.resolve()
+    })
+
 })
 
 
