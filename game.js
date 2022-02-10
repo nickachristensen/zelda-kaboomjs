@@ -28,7 +28,7 @@ loadSprite('kaboom', 'o9WizfI.png')
 loadSprite('stairs', 'VghkL08.png')
 loadSprite('bg', 'u4DVsx6.png')
 
-scene("game", () => {
+scene("game", ({ level, score }) => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     const map = [
@@ -54,11 +54,11 @@ scene("game", () => {
         'x': [sprite('bottom-left-wall'), solid()],
         'y': [sprite('top-left-wall'), solid()],
         'z': [sprite('bottom-right-wall'), solid()],
-        '%': [sprite('left-door'), solid()],
-        '^': [sprite('top-door'), solid()],
-        '$': [sprite('stairs'), solid()],
-        '*': [sprite('slicer'), solid()],
-        '}': [sprite('skeletor'), solid()],
+        '%': [sprite('left-door')],
+        '^': [sprite('top-door')],
+        '$': [sprite('stairs')],
+        '*': [sprite('slicer')],
+        '}': [sprite('skeletor')],
         ')': [sprite('lanterns'), solid()],
         '(': [sprite('fire-pot'), solid()],
     }
@@ -67,8 +67,23 @@ scene("game", () => {
 
     add([sprite('bg'), layer('bg')])
 
+    add([
+        text('0'),
+        pos(400, 450),
+        layer('ui'),
+        {
+          value: score,
+        },
+        scale(2)
+    ])
+
+    add([
+        text('level ' + parseInt(level + 1)), 
+        pos(400, 485), 
+        scale(2)
+    ])
 
 })
 
 
-start("game")
+start("game", { level: 0, score: 0 })
