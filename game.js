@@ -62,19 +62,19 @@ scene("game", ({ level, score }) => {
     const levelCfg = {
         width: 48,
         height: 48,
-        'a': [sprite('left-wall'), solid()],
-        'b': [sprite('right-wall'), solid()],
-        'c': [sprite('top-wall'), solid()],
-        'd': [sprite('bottom-wall'), solid()],
-        'w': [sprite('top-right-wall'), solid()],
-        'x': [sprite('bottom-left-wall'), solid()],
-        'y': [sprite('top-left-wall'), solid()],
-        'z': [sprite('bottom-right-wall'), solid()],
+        'a': [sprite('left-wall'), solid(), 'wall'],
+        'b': [sprite('right-wall'), solid(), 'wall'],
+        'c': [sprite('top-wall'), solid(), 'wall'],
+        'd': [sprite('bottom-wall'), solid(), 'wall'],
+        'w': [sprite('top-right-wall'), solid(), 'wall'],
+        'x': [sprite('bottom-left-wall'), solid(), 'wall'],
+        'y': [sprite('top-left-wall'), solid(), 'wall'],
+        'z': [sprite('bottom-right-wall'), solid(), 'wall'],
         '%': [sprite('left-door'), solid()],
         '^': [sprite('top-door'), 'next-level'],
         '$': [sprite('stairs'), 'next-level'],
-        '*': [sprite('slicer')],
-        '}': [sprite('skeletor')],
+        '*': [sprite('slicer'), 'slicer', { dir: -1 }, 'dangerous'],
+        '}': [sprite('skeletor'), 'skeletor', { dir: -1, timer: 0 }, 'dangerous'],
         ')': [sprite('lanterns'), solid()],
         '(': [sprite('fire-pot'), solid()],
     }
@@ -142,6 +142,39 @@ scene("game", ({ level, score }) => {
         player.dir = vec2(0,1)
     })
 
+    const SLICER_SPEED = 100
+
+    action('slicer', (s) => {
+        s.move(s.dir * SLICER_SPEED, 0)
+    })
+
+    collides('slicer', 'wall', (s) => {
+        s.dir = -s.dir
+    })
+
+    const SKELETOR_SPEED = 60
+
+    action('skeletor', (s) => {
+        s.move(0, s.dir * SKELETOR_SPEED)
+        s.timer -= dt()
+        if (s.timer <= 0) {
+            s.dir = -s.dir
+            s.timer = rand(5)
+        }
+    })
+
+    collides('skeletor', 'wall', (s) => {
+        s.dir = -s.dir
+    })
+
+    player.overlaps('dangerous', () => {
+        go('lose', { score: scoreLabel.value })
+    })
+
+})
+
+scene("lose", ({ score }) => {
+    add([text(score, 32), origin('center'), pos(width()/ 2, height()/ 2)])
 })
 
 
