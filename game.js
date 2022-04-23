@@ -3,6 +3,7 @@ kaboom({
     fullscreen: true,
     scale: 1,
     debug: true,
+    clearColor: [0,0,0,1]
 })
 
 const MOVE_SPEED = 120
@@ -34,23 +35,23 @@ scene("game", ({ level, score }) => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     const maps = [
-        [
-        'ycc)cc^ccw',
-        'a        b',
-        'a      * b',
-        'a    (   b',
-        '%        b',
-        'a    (   b',
-        'a   *    b',
-        'a        b',
-        'xdd)dd)ddz',
+    [
+    'ycc)cc^ccw',
+    'a        b',
+    'a      * b',
+    'a    (   b',
+    '%        b',
+    'a    (   b',
+    'a   *    b',
+    'a        b',
+    'xdd)dd)ddz',
     ],
     [
     'yccccccccw',
     'a        b',
-    'a        )',
+    ')        )',
     'a        b',
-    'A        b',
+    'a        b',
     'a    $   b',
     ')   }    )',
     'a        b',
@@ -70,7 +71,7 @@ scene("game", ({ level, score }) => {
         'x': [sprite('bottom-left-wall'), solid(), 'wall'],
         'y': [sprite('top-left-wall'), solid(), 'wall'],
         'z': [sprite('bottom-right-wall'), solid(), 'wall'],
-        '%': [sprite('left-door'), solid()],
+        '%': [sprite('left-door'), solid(), 'door'],
         '^': [sprite('top-door'), 'next-level'],
         '$': [sprite('stairs'), 'next-level'],
         '*': [sprite('slicer'), 'slicer', { dir: -1 }, 'dangerous'],
@@ -162,6 +163,42 @@ scene("game", ({ level, score }) => {
             s.timer = rand(5)
         }
     })
+
+    function spawnKaboom(p) {
+        const obj = add([sprite('kaboom'), pos(p), 'kaboom'])
+        wait(1, () => {
+            destroy(obj)
+        })
+    }
+
+    keyPress('space', () => {
+        spawnKaboom(player.pos.add(player.dir.scale(48)))
+    })
+
+    player.collides('door', (d) => {
+        destroy(d)
+    })
+
+    collides('kaboom', 'slicer', (k, s) => {
+        camShake(4)
+        wait(1, () => {
+            destroy(k)
+        })
+        destroy(s)
+        scoreLabel.value++
+        scoreLabel.text = scoreLabel.value
+    })
+
+    collides('kaboom', 'skeletor', (k, s) => {
+        camShake(4)
+        wait(1, () => {
+            destroy(k)
+        })
+        destroy(s)
+        scoreLabel.value++
+        scoreLabel.text = scoreLabel.value
+    })
+    
 
     collides('skeletor', 'wall', (s) => {
         s.dir = -s.dir
